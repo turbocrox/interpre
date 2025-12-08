@@ -1,0 +1,22 @@
+{
+  "name": "interpre",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "  npm run --prefix backend   && npm run --prefix frontend &&  npm run  build --prefix frontend  ",
+    "start" : "npm  run start --prefix backend "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turbocrox/interpre.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/turbocrox/interpre/issues"
+  },
+  "homepage": "https://github.com/turbocrox/interpre#readme"
+}
