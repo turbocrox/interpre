@@ -4,7 +4,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-import HERO_IMG from "../assets/banner.png";
+import HERO_IMG from "../assets/landingpage.png";
 import APP_FEATURES from "../utils/data";
 
 import Modal from "../components/Modal";
