@@ -1,52 +1,57 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { LuX } from "react-icons/lu";
 
 const Modal = ({ children, isOpen, onClose, title, hideHeader }) => {
-  if (!isOpen) return null;
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 z-50 flex justify-center items-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+          />
 
-return <div className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-black/40">
-  {/* Modal Content */}
-  <div
-  className={`relative flex flex-col bg-white shadow-lg rounded-lg overflow-hidden
-    `}
-    >
-      {/* Modal Header */}
-      {!hideHeader && (
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        <h3 className="md:text-lg font-medium text-gray-900">{title}</h3>
-        </div>
+          <motion.div
+            className="relative flex flex-col bg-neutral-900 border border-neutral-800 shadow-2xl shadow-black/50 rounded-2xl overflow-hidden max-h-[90vh]"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          >
+            {!hideHeader && title && (
+              <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-800">
+                <h3 className="text-lg font-semibold text-white">{title}</h3>
+              </div>
+            )}
+
+            <motion.button
+              type="button"
+              className="absolute top-4 right-4 z-10 flex items-center justify-center w-8 h-8 rounded-xl text-neutral-500 hover:text-white hover:bg-neutral-800 transition-all cursor-pointer"
+              onClick={onClose}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <LuX className="w-5 h-5" />
+            </motion.button>
+
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+              {children}
+            </div>
+          </motion.div>
+        </motion.div>
       )}
-      
-      <button
-      type="button"
-      className="text-gray-400 bg-transparent hover:bg-orange-100 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center absolute top-3.5 right-3.5 cursor-pointer"
-      onClick={onClose}
-      >
-      
-      <svg
-      className=""
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      
-      <path
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      d="M6 18L18 6M6 6l12 12"
-      />
-    </svg>
-  </button>
-    {/* Modal Body (Scrollable) */}
-    <div className="flex-1 overflow-y-auto custom-scrollbar">
-      {children}
-      </div>
-    </div>
-  </div>
-
+    </AnimatePresence>
+  );
 };
 
 export default Modal;
