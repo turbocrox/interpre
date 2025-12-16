@@ -375,7 +375,7 @@ const LandingPage = () => {
                   </motion.span>
                 </MagneticButton>
 
-                <motion.button
+               <motion.button
                   onClick={handleCTA}
                   className="group text-sm font-medium px-8 py-4 rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-300 flex items-center gap-2 bg-white/50 backdrop-blur-sm"
                   whileHover={{ scale: 1.02 }}
