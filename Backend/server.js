@@ -13,13 +13,17 @@ const { generateInterviewQuestions, generateConceptExplanation } = require("./co
 const app = express();
 
 
+
 // Middleware to handle CORS
 const allowedOrigins = [
     "http://localhost:5173", // Development
     "https://localhost:5173", // Development HTTPS
-    // Add your Render frontend URL here after deployment
-    // "https://your-frontend-name.onrender.com"
 ];
+
+// Add FRONTEND_URL from environment variables if provided
+if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
 
 app.use(
     cors({
