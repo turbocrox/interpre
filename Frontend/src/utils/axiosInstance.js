@@ -1,8 +1,19 @@
+
+
 import axios from "axios";
 import { BASE_URL} from "./apiPaths";
 
+// Get the appropriate base URL based on environment
+const getBaseURL = () => {
+    // In production, use environment variable, fallback to development URL
+    if (import.meta.env.PROD) {
+        return import.meta.env.VITE_API_BASE_URL || "https://your-backend-name.onrender.com";
+    }
+    return BASE_URL;
+};
+
 const axiosInstance = axios.create({
-    baseURL: BASE_URL, 
+    baseURL: getBaseURL(), 
     timeout: 30000, 
     headers: {
         "Content-Type": "application/json", 
@@ -14,10 +25,10 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     (config) => {
         const accessToken = localStorage.getItem("token");
-     if (accessToken) {  
-        config.headers.Authorization = `Bearer ${accessToken}`; 
-     }
-     return config; 
+        if (accessToken) {  
+            config.headers.Authorization = `Bearer ${accessToken}`; 
+        }
+        return config; 
     }, 
     (error) => { 
         return Promise.reject(error);
@@ -25,25 +36,23 @@ axiosInstance.interceptors.request.use(
 );
 
 // Response Interceptor
-
 axiosInstance.interceptors.response.use(
     (response) => {
         return response;
-},
+    },
     (error) => {
         // Handle common errors globally
         if (error.response) {
             if (error.response.status === 401) {
-        // Redirect to login page
-        window.location.href = "/";
-    } else if (error.response.status === 500) {
-        console.error("Server error. Please try again later.");
-}
-
+                // Redirect to login page
+                window.location.href = "/";
+            } else if (error.response.status === 500) {
+                console.error("Server error. Please try again later.");
+            }
         } else if (error.code === "ECONNABORTED") {
             console.error("Request timeout. Please try again.");
-}
-    return Promise.reject(error);
+        }
+        return Promise.reject(error);
     }
 );
 
