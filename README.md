@@ -264,19 +264,6 @@ interpre/
 - **Accessibility**: Proper ARIA labels and keyboard navigation
 - **Performance**: Optimized images and lazy loading
 
-## 🚀 Deployment
-
-### Backend Deployment
-1. Set up MongoDB (Atlas or self-hosted)
-2. Configure environment variables for production
-3. Deploy to platforms like Heroku, DigitalOcean, or AWS
-4. Ensure all API endpoints are properly configured
-
-### Frontend Deployment
-1. Build the production version: `npm run build`
-2. Deploy to platforms like Vercel, Netlify, or GitHub Pages
-3. Configure environment variables if needed
-4. Update API endpoints to point to production backend
 
 ## 🤝 Contributing
 
@@ -293,7 +280,7 @@ This project is licensed under the ISC License - see the package.json files for 
 ## 👨‍💻 Author
 
 **Aditya Pundir**
-- Built with ❤️ using React, Node.js, and AI technologies
+- Built with  using React, Node.js, and AI technologies
 
 
 **Ready to ace your next interview? Start preparing with Interview Prep AI today!** 🎯
