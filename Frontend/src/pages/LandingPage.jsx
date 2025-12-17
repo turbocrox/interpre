@@ -166,6 +166,7 @@ const FeatureCard = ({ feature, index, Icon }) => {
       />
 
       <div className="relative z-10">
+
         <motion.div
           className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center mb-6"
           whileHover={{ rotate: [0, -10, 10, 0] }}
@@ -177,19 +178,6 @@ const FeatureCard = ({ feature, index, Icon }) => {
         <h3 className="text-xl font-semibold mb-3 text-gray-900">
           {feature.title}
         </h3>
-        
-        <p className="text-gray-600 leading-relaxed">
-          {feature.description}
-        </p>
-
-        <motion.div
-          className="flex items-center gap-2 mt-6 text-sm font-medium text-black"
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -10 }}
-          transition={{ duration: 0.3 }}
-        >
-          Learn more <LuArrowRight className="w-4 h-4" />
-        </motion.div>
       </div>
     </motion.div>
   );
@@ -304,7 +292,7 @@ const LandingPage = () => {
             ) : (
               <motion.button
                 onClick={() => setOpenAuthModal(true)}
-                className="text-sm font-medium px-6 py-2.5 rounded-full border border-gray-200 bg-white/80 backdrop-blur-sm hover:bg-black hover:text-white hover:border-black transition-all duration-300 shadow-sm"
+                className="text-sm font-medium px-6 py-2.5 rounded-full border border-gray-200 bg-gray-100 backdrop-blur-sm hover:bg-black hover:text-white hover:border-black transition-all duration-300 shadow-sm"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -626,19 +614,7 @@ const LandingPage = () => {
                 Interview Prep AI
               </span>
             </motion.div>
-            
-            <div className="flex gap-8 text-sm text-gray-500">
-              {["Privacy", "Terms", "Support", "Contact"].map((item) => (
-                <motion.a
-                  key={item}
-                  href="#"
-                  className="hover:text-black transition-colors"
-                  whileHover={{ y: -2 }}
-                >
-                  {item}
-                </motion.a>
-              ))}
-            </div>
+           
 
             <p className="text-sm text-gray-400">
               © 2025 Interview Prep AI · Built by Aditya Pundir
