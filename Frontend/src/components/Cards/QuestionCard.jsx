@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 
-import React, { useRef, useState } from "react";
+
+import React, { useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LuChevronDown, LuPin, LuPinOff, LuSparkles, LuMessageCircle } from "react-icons/lu";
 import AIResponsePreview from "../../pages/InterviewPrep/components/AIResponsePreview";
+
 
 const QuestionCard = ({
   question,
@@ -11,6 +13,7 @@ const QuestionCard = ({
   onLearnMore,
   isPinned,
   onTogglePin,
+  isLoading = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -21,11 +24,13 @@ const QuestionCard = ({
     setIsExpanded(!isExpanded);
   };
 
-  const handlePin = () => {
+  const handlePin = useCallback(() => {
+    if (isLoading) return; // Prevent multiple clicks while loading
+    
     setShowPinEffect(true);
     setTimeout(() => setShowPinEffect(false), 600);
     onTogglePin();
-  };
+  }, [isLoading, onTogglePin]);
 
   return (
     <motion.div
@@ -96,28 +101,38 @@ const QuestionCard = ({
                   exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.2 }}
                 >
+
                   <motion.button
                     className={`flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${
-                      isPinned
+                      isLoading
+                        ? "bg-neutral-800 text-neutral-500 border border-neutral-700 cursor-not-allowed"
+                        : isPinned
                         ? "bg-white/10 text-white border border-white/20"
                         : "bg-neutral-800 text-neutral-400 border border-neutral-700 hover:border-white/20 hover:bg-white/5 hover:text-white"
                     }`}
                     onClick={handlePin}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    disabled={isLoading}
+                    whileHover={!isLoading ? { scale: 1.05 } : {}}
+                    whileTap={!isLoading ? { scale: 0.95 } : {}}
                   >
                     <motion.span
-                      animate={isPinned ? { rotate: [0, -20, 0] } : {}}
+                      animate={!isLoading && isPinned ? { rotate: [0, -20, 0] } : {}}
                       transition={{ duration: 0.3 }}
                     >
-                      {isPinned ? (
+                      {isLoading ? (
+                        <motion.div
+                          className="w-3.5 h-3.5 border-2 border-neutral-500 border-t-transparent rounded-full"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        />
+                      ) : isPinned ? (
                         <LuPinOff className="w-3.5 h-3.5" />
                       ) : (
                         <LuPin className="w-3.5 h-3.5" />
                       )}
                     </motion.span>
                     <span className="hidden md:inline">
-                      {isPinned ? "Unpin" : "Pin"}
+                      {isLoading ? "Loading..." : isPinned ? "Unpin" : "Pin"}
                     </span>
                   </motion.button>
 

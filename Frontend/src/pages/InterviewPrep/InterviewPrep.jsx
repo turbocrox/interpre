@@ -20,6 +20,7 @@ import QuestionCard from "../../components/Cards/QuestionCard";
 const InterviewPrep = () => {
   const { sessionId } = useParams();
 
+
   const [sessionData, setSessionData] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -28,6 +29,31 @@ const InterviewPrep = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdateLoader, setIsUpdateLoader] = useState(false);
+  
+
+  // Track individual question loading states for pin operations
+  const [questionLoadingStates, setQuestionLoadingStates] = useState({});
+
+
+  // Helper function to sort questions with pinned ones at the top
+  // When unpinning, questions return to their original positions
+  const sortQuestions = (questions) => {
+    return [...questions].sort((a, b) => {
+      // First, separate pinned from unpinned
+      if (a.isPinned && !b.isPinned) return -1; // Pinned questions first
+      if (!a.isPinned && b.isPinned) return 1;  // Unpinned questions last
+      
+      // For questions with the same pin status, sort by original index
+      // This ensures pinned questions stay in their relative order
+      // and unpinned questions return to their original positions
+      if (a.isPinned && b.isPinned) {
+        return a.originalIndex - b.originalIndex; // Pinned questions: sort by original position
+      } else {
+        return a.originalIndex - b.originalIndex; // Unpinned questions: return to original position
+      }
+    });
+  };
+
 
   const fetchSessionDetailsById = async () => {
     try {
@@ -36,7 +62,16 @@ const InterviewPrep = () => {
       );
 
       if (response.data && response.data.session) {
-        setSessionData(response.data.session);
+        // Add originalIndex to each question to track their initial positions
+        const questionsWithOriginalIndex = response.data.session.questions.map((question, index) => ({
+          ...question,
+          originalIndex: index // Track the original position
+        }));
+        
+        setSessionData({
+          ...response.data.session,
+          questions: questionsWithOriginalIndex
+        });
       }
     } catch (error) {
       console.error("Error:", error);
@@ -70,17 +105,87 @@ const InterviewPrep = () => {
     }
   };
 
+
   const toggleQuestionPinStatus = async (questionId) => {
+    // Get current question data
+    const currentQuestion = sessionData?.questions?.find(q => q._id === questionId);
+    if (!currentQuestion) return;
+
+    // Set loading state for this specific question
+    setQuestionLoadingStates(prev => ({
+      ...prev,
+      [questionId]: true
+    }));
+
+    // Optimistic update: immediately toggle the pin status locally
+    const optimisticPinnedStatus = !currentQuestion.isPinned;
+    
+
+
+    // Update local state immediately for instant UI response
+    const updatedQuestions = sessionData.questions.map(q => 
+      q._id === questionId 
+        ? { ...q, isPinned: optimisticPinnedStatus }
+        : q
+    );
+    
+    // Sort questions: pinned questions go to top, maintain order within each group
+    const sortedQuestions = sortQuestions(updatedQuestions);
+    
+    setSessionData(prev => ({
+      ...prev,
+      questions: sortedQuestions
+    }));
+
     try {
       const response = await axiosInstance.post(
         API_PATHS.QUESTION.PIN(questionId)
       );
 
+
+
       if (response.data && response.data.question) {
-        fetchSessionDetailsById();
+        // Success: Update with actual server response and maintain sorted order
+        const updatedQuestions = sessionData.questions.map(q => 
+          q._id === questionId 
+            ? { ...q, isPinned: response.data.question.isPinned }
+            : q
+        );
+        
+        // Apply the same sorting logic to maintain order
+        const sortedQuestions = sortQuestions(updatedQuestions);
+        
+        setSessionData(prev => ({
+          ...prev,
+          questions: sortedQuestions
+        }));
+        toast.success(response.data.question.isPinned ? "Question pinned!" : "Question unpinned!");
       }
+
+
     } catch (error) {
       console.error("Error:", error);
+      // Error: Rollback to original state and maintain sorted order
+      const rollbackQuestions = sessionData.questions.map(q => 
+        q._id === questionId 
+          ? { ...q, isPinned: currentQuestion.isPinned }
+          : q
+      );
+      
+      // Apply the same sorting logic to maintain order during rollback
+      const sortedRollbackQuestions = sortQuestions(rollbackQuestions);
+      
+      setSessionData(prev => ({
+        ...prev,
+        questions: sortedRollbackQuestions
+      }));
+      toast.error("Failed to update pin status. Please try again.");
+    } finally {
+      // Clear loading state
+      setQuestionLoadingStates(prev => ({
+        ...prev,
+        [questionId]: false
+      }));
     }
   };
 
@@ -195,6 +300,7 @@ const InterviewPrep = () => {
                       layout
                       layoutId={`question-${data._id || index}`}
                     >
+
                       <QuestionCard
                         question={data?.question}
                         answer={data?.answer}
@@ -203,6 +309,7 @@ const InterviewPrep = () => {
                         }
                         isPinned={data?.isPinned}
                         onTogglePin={() => toggleQuestionPinStatus(data._id)}
+                        isLoading={questionLoadingStates[data._id]}
                       />
 
                       {!isLoading &&
