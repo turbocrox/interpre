@@ -363,7 +363,7 @@ const LandingPage = () => {
                   </motion.span>
                 </MagneticButton>
 
-               <motion.button
+               {/*<motion.button
                   onClick={handleCTA}
                   className="group text-sm font-medium px-8 py-4 rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-300 flex items-center gap-2 bg-white/50 backdrop-blur-sm"
                   whileHover={{ scale: 1.02 }}
@@ -373,7 +373,7 @@ const LandingPage = () => {
                     <LuPlay className="w-3 h-3 text-white ml-0.5" />
                   </div>
                   Watch Demo
-                </motion.button>
+                </motion.button> */}
               </motion.div>
 
               <motion.div
@@ -457,7 +457,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="py-20 bg-gray-50/50 border-y border-gray-100">
+      <div className="py-20 bg-gray-100 border-y border-gray-100">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <StatCard icon={LuUsers} value={10000} label="Active Users" delay={0} />
